@@ -20,7 +20,14 @@ let package = Package(
     // .package(url: /* package url */, from: "1.0.0"),
   ],
   targets: [
-    .binaryTarget(name: "Clibgit2", path: "Clibgit2.xcframework"),
+    // Use remote binary from GitHub Release (recommended for users)
+    .binaryTarget(
+      name: "Clibgit2",
+      url: "https://github.com/flaboy/static-libgit2/releases/download/1.8.4-20260121/Clibgit2.xcframework.zip",
+      checksum: "f62a6760f8c2ff1a82e4fb80c69fe2aa068458c7619f5b98c53c71579f72f9c7"
+    ),
+    // Alternative: Use local path (for development)
+    // .binaryTarget(name: "Clibgit2", path: "Clibgit2.xcframework"),
     .target(name: "LinkerConfigurator", linkerSettings: [
       .linkedLibrary("z"),
       .linkedLibrary("iconv")

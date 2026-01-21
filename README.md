@@ -2,7 +2,35 @@
 
 This repository makes it easier to include the C library [Libgit2](https://libgit2.org) into an iOS or Mac application. It does *not* try to provide any sort of nice, Swifty wrapper over the `libgit2` APIs.
 
-This repository is heavily indebted to https://github.com/light-tech/LibGit2-On-iOS. However, the `LibGit2-On-iOS` project doesn't expose the C Language bindings as its own Swift Package, choosing instead to use their framework as a binary target in their Swift Language binding project [MiniGit](https://github.com/light-tech/MiniGit). If you want Swift bindings, you should probably use that project! However, if you want to work directly with the C API, _this_ is the project for you want to start with.
+## Original Project
+
+This repository is a fork and enhancement of:
+- **Original repository**: https://github.com/bdewey/static-libgit2
+- **Build script source**: https://github.com/light-tech/LibGit2-On-iOS
+
+The original `LibGit2-On-iOS` project doesn't expose the C Language bindings as its own Swift Package, choosing instead to use their framework as a binary target in their Swift Language binding project [MiniGit](https://github.com/light-tech/MiniGit). If you want Swift bindings, you should probably use that project! However, if you want to work directly with the C API, _this_ is the project for you want to start with.
+
+## Enhancements in This Fork
+
+This fork includes significant improvements to the build system:
+
+### 1. Makefile-Based Build System
+- **Dependency tracking**: Automatically avoids rebuilding unchanged components
+- **Build protection**: Protects build artifacts from accidental deletion
+- **Parallel build support**: Build multiple platforms simultaneously using `make -jN`
+- **Comprehensive logging**: All build output is logged to `build.log` using `tee`
+- **Platform isolation**: Each platform uses independent build directories to enable safe parallel builds
+
+### 2. Build Improvements
+- Independent build directories per platform (prevents conflicts during parallel builds)
+- Automatic fallback mechanisms for installation failures
+- Better error handling and logging
+- Support for all Apple platforms: iOS, iOS Simulator, Mac Catalyst, and macOS
+
+### 3. Release Management
+- Pre-built XCFramework available via GitHub Releases
+- Swift Package Manager integration with remote binary targets
+- Checksum verification for security
 
 ## Usage in an Application
 
@@ -26,7 +54,7 @@ If you want to use `static-libgit2` in another package (say, to expose some cool
 
 ```swift
     dependencies: [
-      .package(url: "https://github.com/bdewey/static-libgit2", from: "0.1.0"),
+      .package(url: "https://github.com/flaboy/static-libgit2", from: "1.8.4-20260121"),
     ],
 ```
 
@@ -36,20 +64,63 @@ If you want to use `static-libgit2` in another package (say, to expose some cool
 
 | Library | Version |
 | ------- | ------- |
-| libgit2 | 1.3.0   |
-| openssl | 3.0.0   |
-| libssh2 | 1.10.0  |
+| libgit2 | 1.8.4   |
+| openssl | 3.6.0   |
+| libssh2 | 1.11.1  |
 
-This build recipe and the original version of the build script comes from the insightful project https://github.com/light-tech/LibGit2-On-iOS. 
+The original build recipe comes from the insightful project https://github.com/light-tech/LibGit2-On-iOS. 
 
 # Build it yourself
 
 You don't need to depend on this package's pre-built libraries. You can build your own version of the framework.
 
-```
+## Using Makefile (Recommended)
+
+The project includes a Makefile that provides:
+- **Dependency tracking**: Avoids rebuilding unchanged components
+- **Build protection**: Protects build artifacts from accidental deletion
+- **Comprehensive logging**: All build output is logged to `build.log` using `tee`
+
+```bash
 # You need the tool `wget`
 brew install wget
-git clone https://github.com/bdewey/static-libgit2
+
+# Clone the repository
+git clone https://github.com/flaboy/static-libgit2
+cd static-libgit2
+
+# Build using Makefile (recommended)
+make
+
+# Parallel build for faster compilation (recommended for multi-core CPUs)
+# Each platform builds independently, so you can use -jN where N is your CPU cores
+make -j8
+
+# Or specify the number of parallel jobs
+make -j$(sysctl -n hw.ncpu)
+
+# Sequential build (verbose, slower)
+make -j1
+
+# Clean build artifacts
+make clean
+
+# View build log
+tail -f build.log
+```
+
+## Using Shell Script (Legacy)
+
+The original shell script is still available:
+
+```bash
+# You need the tool `wget`
+brew install wget
+git clone https://github.com/flaboy/static-libgit2
 cd static-libgit2
 ./build-libgit2-framework.sh
 ```
+
+## Pre-built Releases
+
+Pre-built XCFrameworks are available via [GitHub Releases](https://github.com/flaboy/static-libgit2/releases). The Swift Package Manager automatically downloads the binary from releases, so you don't need to build it yourself unless you want to customize the build.

@@ -8,6 +8,7 @@
 #define INCLUDE_git_email_h__
 
 #include "common.h"
+#include "diff.h"
 
 /**
  * @file git2/email.h
@@ -34,7 +35,7 @@ typedef enum {
 	GIT_EMAIL_CREATE_ALWAYS_NUMBER = (1u << 1),
 
 	/** Do not perform rename or similarity detection. */
-	GIT_EMAIL_CREATE_NO_RENAMES = (1u << 2),
+	GIT_EMAIL_CREATE_NO_RENAMES = (1u << 2)
 } git_email_create_flags_t;
 
 /**

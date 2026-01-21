@@ -2,3 +2,10 @@ install*
 dependencies
 .swiftpm
 .DS_Store
+*.log
+build-*.log
+build-*.sh
+monitor-builds.sh
+*.zip
+*.tar.gz
+build-output.log
